@@ -1,35 +1,49 @@
 import React from 'react';
-import './styles.css'; // Importando o arquivo CSS
+import './styles.css';
 
-const DataGrid = () => {
-    const data = [
-        { id: 1, x: 10, y: 20, velocidade: 30, direcao: '45' },
-        { id: 2, x: 15, y: 25, velocidade: 40, direcao: '45' },
-        { id: 3, x: 20, y: 30, velocidade: 50, direcao: '45' },
-        { id: 4, x: 25, y: 35, velocidade: 60, direcao: '45' },
-    ];
+const DataGrid = ({ avioes, avioesSelecionados, setAvioesSelecionados }) => {
+    const handleCheckboxChange = (aviao) => {
+        setAvioesSelecionados(avioesJaSelecionados => {
+            if (avioesJaSelecionados.some(aviaoSelecionado => aviaoSelecionado.id === aviao.id)) {
+                return avioesJaSelecionados.filter(aviaoSelecionado => aviaoSelecionado.id !== aviao.id);
+            }
+            
+			return [...avioesJaSelecionados, aviao];
+        });
+    };
 
     return (
         <div className="panel-container">
             <h1>DataGrid</h1>
+
             <table className="styled-table">
                 <thead>
                     <tr>
                         <th></th>
+                        <th>ID</th>
                         <th>X</th>
                         <th>Y</th>
+                        <th>R</th>
+                        <th>A</th>
                         <th>V</th>
                         <th>D</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {data.map((item) => (
+                    {avioes.map((item) => (
                         <tr key={item.id}>
                             <td>
-                                <input type="checkbox" />
+                                <input
+                                    type="checkbox"
+                                    checked={avioesSelecionados.some(aviao => aviao.id === item.id)}
+                                    onChange={() => handleCheckboxChange(item)}
+                                />
                             </td>
+                            <td>{item.id}</td>
                             <td>{item.x}</td>
                             <td>{item.y}</td>
+                            <td>{item.raio}</td>
+                            <td>{item.angulo}</td>
                             <td>{item.velocidade}km/h</td>
                             <td>{item.direcao}°</td>
                         </tr>

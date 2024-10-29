@@ -2,7 +2,10 @@ import React, { useState, useEffect } from 'react';
 import './styles.css';
 
 const EntradaDados = ({ addAviao }) => {
+    const [idInserir, setIdInserir] = useState(1);
+
     const [formData, setFormData] = useState({
+        id: idInserir,
         x: '',
         y: '',
         direcao: '',
@@ -23,7 +26,9 @@ const EntradaDados = ({ addAviao }) => {
 
         addAviao(formData);
 
-        setFormData({ x: '', y: '', direcao: '', velocidade: '' });
+        setIdInserir(idInserir + 1);
+
+        setFormData({ id: idInserir + 1, x: '', y: '', direcao: '', velocidade: '' });
     };
 
     return (
