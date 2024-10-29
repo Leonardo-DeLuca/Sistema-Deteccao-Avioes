@@ -27,13 +27,17 @@ const App = () => {
 	const onRotacionar = () => {
 		console.log(avioesSelecionados)
 	};
+
+	const onAeroProx = () => {
+		// logica
+	};
 	
 	return (
 		<div className='app'>
 			<div>
 				<EntradaDados addAviao={addAviao} />
 				<FuncoesTransformacao onTransladar={onTransladar} onEscalonar={onEscalonar} onRotacionar={onRotacionar} />
-				<FuncoesRastreamento />
+				<FuncoesRastreamento onAeroProx={onAeroProx} onAviProx={onAeroProx} onEmColisao={onAeroProx} />
 			</div>
 			
 			<Radar avioes={avioesRadar} />
