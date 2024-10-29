@@ -1,12 +1,17 @@
-.container {
+.containerGrafico {
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
-.containerGrafico {
-    width: 500px;
-    height: 500px;
+.containerGrafico h1 {
+    margin: 0;
+    font-size: 20px;
+}
+
+.grafico {
+    width: 450px;
+    height: 450px;
     display: flex;
     justify-content: center;
     align-items: center;

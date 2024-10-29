@@ -6,11 +6,7 @@ import iconeAviao from '../../assets/aviao.png';
 
 ChartJS.register(...registerables);
 
-const Radar = () => {
-    const [avioes, setAvioes] = useState([]);
-    const [x, setX] = useState('');
-    const [y, setY] = useState('');
-    const [angulo, setAngulo] = useState('');
+const Radar = ({ avioes }) => {
     const [iconeImagem, setIconeImagem] = useState(null);
 
     useEffect(() => {
@@ -19,19 +15,6 @@ const Radar = () => {
         img.onload = () => setIconeImagem(img);
     }, []);
 
-    const adicionarPonto = () => {
-        const newX = parseFloat(x);
-        const newY = parseFloat(y);
-        const newAngulo = parseFloat(angulo);
-
-        if (!isNaN(newX) && !isNaN(newY) && !isNaN(newAngulo)) {
-            setAvioes([...avioes, { x: newX, y: newY, angle: newAngulo }]);
-            setX('');
-            setY('');
-            setAngulo('');
-        }
-    };
-
     const chartData = {
         datasets: [{
             label: 'Avião',
@@ -39,9 +22,7 @@ const Radar = () => {
             backgroundColor: '#000',
             borderWidth: false,
             showLine: false,
-            pointRadius: 5,
-            hoverRadius: 7,
-            rotation: ({ raw }) => raw ? 90 - raw.angle : 0,
+            rotation: ({ raw }) => raw ? 90 - raw.direcao : 0,
             pointStyle: () => iconeImagem
         }],
     };
@@ -70,31 +51,10 @@ const Radar = () => {
     };
 
     return (
-        <div>
-            <div className='container'>
-                <div style={{ marginBottom: '20px' }}>
-                    <input
-                        type="number"
-                        placeholder="Valor de X"
-                        value={x}
-                        onChange={(e) => setX(e.target.value)}
-                    />
-                    <input
-                        type="number"
-                        placeholder="Valor de Y"
-                        value={y}
-                        onChange={(e) => setY(e.target.value)}
-                    />
-                    <input
-                        type="number"
-                        placeholder="Direção (graus)"
-                        value={angulo}
-                        onChange={(e) => setAngulo(e.target.value)}
-                    />
-                    <button onClick={adicionarPonto}>Adicionar Ponto</button>
-                </div>
-            </div>
-            <div className='containerGrafico'>
+        <div className='containerGrafico'>
+            <h1>Radar</h1>
+            
+            <div className='grafico'>
                 <Scatter data={chartData} options={options} />
             </div>
         </div>
