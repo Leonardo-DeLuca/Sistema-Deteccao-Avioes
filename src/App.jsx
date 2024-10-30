@@ -91,7 +91,8 @@ const App = () => {
 
 	const onRotaColisao = (data) => {
 		const avioesEmRotaDeColisao= tempoMinimoEntreAvioes(data, avioes);
-
+		
+		console.log(avioes)
 		console.log(avioesEmRotaDeColisao)
 	}
 	

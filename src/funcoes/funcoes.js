@@ -1,29 +1,20 @@
 //Falta tratar avioes com mesma linha em direções convergentes (se necessário), angulos de 90 graus, 
 //aviões em direções opostas porém com linhas que se cruzam.
 
-// class Aviao {
-//     id;
-//     x;
-//     y;
-//     direcao;
-//     velocidade;
-//     coeficientesEquacao;
+function pertoSuficienteDeZero(num){
+    if (Math.abs(num) < 1e-8) {
+        return 0;
+    }
 
-//     constructor(id, x, y, direcao, velocidade) {
-//         this.id = id;
-//         this.x = x;
-//         this.y = y;
-//         this.direcao = direcao;
-//         this.velocidade = velocidade;
-
-//         this.coeficientesEquacao = this.calcEquacaoVoo(x, y, direcao);
-//     }
-
-//     
-// }
+    return num
+}
 
 function getTanFromDegrees(degrees) {
-    return Math.tan(degrees * (Math.PI / 180));
+    let tanValor = Math.tan(degrees * (Math.PI / 180));
+    
+    tanValor = pertoSuficienteDeZero(tanValor);
+    
+    return tanValor;
 }
 
 function getSinFromDegrees(degrees) {
@@ -37,9 +28,8 @@ function getCosFromDegrees(degrees) {
 const getNumDuasCasas = (numero) => Math.floor(numero * 100) / 100;
 
 function pontoComum(equ1, equ2) {
-    let coefX = equ1[0] + -(equ2[0]);
+    let coefX = getNumDuasCasas(equ1[0]) + -(getNumDuasCasas(equ2[0]));
 
-    if (coefX != 0) {
         let resto = -(equ1[1] + equ1[2]) + (equ2[1] + equ2[2]);
         let valorXFinal = resto / coefX;
 
@@ -48,10 +38,7 @@ function pontoComum(equ1, equ2) {
         let coordenadaComum = [valorXFinal, valorYFinal]
 
         return coordenadaComum;
-    }
 
-
-    return false
 }
 
 function diferencaTempoPontoComum(tempoAviao1, tempoAviao2) {
@@ -72,6 +59,41 @@ function tempoEmSegundosAtePonto(xFinal, yFinal, aviao) {
             return tempoSegundos;
 }
 
+function verificaOpostosMesmaLinha(direcaoAviao1, direcaoAviao2){
+    const diferenca = Math.abs(direcaoAviao1 - direcaoAviao2);
+
+    while(diferenca > 180){
+        diferenca -= 360
+    }
+
+    if(diferenca == 180){
+        return true
+    }
+
+    return false
+}
+
+function verificaInclinacaoLinha(coefAng1, coefAng2){
+    const coeficienteAngular1 = getNumDuasCasas(coefAng1);
+    const coeficienteAngular2 = getNumDuasCasas(coefAng2);
+
+    return coeficienteAngular1 === coeficienteAngular2;
+}
+
+function verificaMesmaReta(aviao1, aviao2){
+    let linear1 = aviao1.coeficientesEquacao[0];
+    let linear2 = aviao2.coeficientesEquacao[0];
+    let intercepto1 = aviao1.coeficientesEquacao[1] + aviao1.coeficientesEquacao[2];
+    let intercepto2 = aviao2.coeficientesEquacao[1] + aviao2.coeficientesEquacao[2];
+
+    linear1 = getNumDuasCasas(linear1);
+    linear2 = getNumDuasCasas(linear2);
+    intercepto1 = pertoSuficienteDeZero(intercepto1);
+    intercepto2 = pertoSuficienteDeZero(intercepto2);
+
+    return linear1 === linear2 && intercepto1 == intercepto2
+}
+
 export const calcEquacaoVoo = (x, y, direcao) => {
     const tangDirecao = getTanFromDegrees(direcao);
 
@@ -86,8 +108,8 @@ export const calcEquacaoVoo = (x, y, direcao) => {
 
 export const transladarAviao = (x, y, listaAvioes) => {
     return listaAvioes.map(aviao => {
-        aviao.x = getNumDuasCasas(aviao.x * x);
-        aviao.y = getNumDuasCasas(aviao.y * y);
+        aviao.x = getNumDuasCasas(aviao.x + x);
+        aviao.y = getNumDuasCasas(aviao.y + y);
         aviao.coeficientesEquacao = calcEquacaoVoo(aviao.x, aviao.y, aviao.direcao);
         return aviao;
     });
@@ -155,88 +177,39 @@ export const distanciaMinimaEntreAvioes = (distanciaMinima, listaAvioes) => {
     }).filter(item => item !== null);
 }
 
-
 export const tempoMinimoEntreAvioes = (tempoMinimo, listaAvioes) => {
     return listaAvioes.flatMap((aviao1, index1) => {
         return listaAvioes.map((aviao2, index2) => {
             if (index1 < index2) {
                 const temPontodeEncontro = pontoComum(aviao1.coeficientesEquacao, aviao2.coeficientesEquacao);
 
-            if (temPontodeEncontro) {
-                let tempoAviao1 = tempoEmSegundosAtePonto(temPontodeEncontro[0], temPontodeEncontro[1], aviao1)
-                let tempoAviao2 = tempoEmSegundosAtePonto(temPontodeEncontro[0], temPontodeEncontro[1], aviao2)
-
-                let diffTempo = diferencaTempoPontoComum(tempoAviao1, tempoAviao2)
-
-                if (diffTempo <= tempoMinimo) {
-                    let id1 = aviao1.id;
-                    let id2 = aviao2.id;
-
-                    return{ id1, id2, diffTempo };
+                if(verificaMesmaReta(aviao1, aviao2)){
+                    console.log('mesma reta')
+                    if(verificaOpostosMesmaLinha(aviao1.direcao, aviao2.direcao)){
+                        console.log('opostos na mesma reta')
+                        return null;
+                    }
                 }
+
+                if((verificaInclinacaoLinha(aviao1.coeficientesEquacao[0]) == verificaInclinacaoLinha(aviao2.coeficientesEquacao[0]))){
+                    if (temPontodeEncontro) {
+                        let tempoAviao1 = tempoEmSegundosAtePonto(temPontodeEncontro[0], temPontodeEncontro[1], aviao1)
+                        let tempoAviao2 = tempoEmSegundosAtePonto(temPontodeEncontro[0], temPontodeEncontro[1], aviao2)
+
+                        let diffTempo = diferencaTempoPontoComum(tempoAviao1, tempoAviao2)
+
+                        if (diffTempo <= tempoMinimo) {
+                            let id1 = aviao1.id;
+                            let id2 = aviao2.id;
+
+                            return{ id1, id2, diffTempo, temPontodeEncontro };
+                        }
+                    }
+                    console.log('paralelos')
+                    return null
+                }
+                
             }
-            }
-            return null;
         });
     }).filter(item => item !== null);
 }
-
-// let id = 1;
-
-// let aviao1 = new Aviao(id, 1, 2, 45, 200);
-
-// id++;
-
-// let aviao2 = new Aviao(id, 3, 1, 135, 1600);
-
-// id++;
-
-// let aviao3 = new Aviao(id, 8, -9, 45, 200);
-
-// id++;
-
-// let aviao4 = new Aviao(id, 20, 14, 135, 1600);
-
-// console.log("coeficientes av1: ", aviao1.coeficientesEquacao)
-// console.log("coeficientes av2: ", aviao2.coeficientesEquacao)
-
-
-// let coordenadaEncontro = pontoComum(aviao1.coeficientesEquacao, aviao2.coeficientesEquacao)
-// console.log("coordenada de encontro: ", coordenadaEncontro)
-
-// console.log("Tempo av1: ", aviao1.tempoEmSegundosAtePonto(coordenadaEncontro[0], coordenadaEncontro[1]))
-// console.log("Tempo av2: ", aviao2.tempoEmSegundosAtePonto(coordenadaEncontro[0], coordenadaEncontro[1]))
-
-// let diffTempo = diferencaTempoPontoComum(aviao1.tempoEmSegundosAtePonto(coordenadaEncontro[0], coordenadaEncontro[1]), aviao2.tempoEmSegundosAtePonto(coordenadaEncontro[0], coordenadaEncontro[1]))
-// console.log(`Diferença tempo: ${diffTempo.toFixed(2)}s`)
-
-// let listaAvioes = []
-// listaAvioes.push(aviao1, aviao2, aviao3, aviao4)
-
-// let avioesComDistMinimaAeroporto = distanciaMinimaAeroporto(17.1, listaAvioes);
-// console.log(avioesComDistMinimaAeroporto)
-
-// let avioesComDistMinima = distanciaMinimaEntreAvioes(30, listaAvioes);
-// console.log(avioesComDistMinima)
-
-// let avioesComTempoMinimo = tempoMinimoEntreAvioes(100, listaAvioes);
-// console.log(avioesComTempoMinimo)
-
-
-// console.log(listaAvioes)
-
-// rotacionarAviao(78, 3, 7, listaAvioes)
-
-// console.log(listaAvioes)
-
-// transladarAviao(10, 10, listaAvioes)
-
-// console.log(listaAvioes)
-
-// escalonarAviao(0.5, 2, listaAvioes)
-
-// console.log(listaAvioes)
-
-// rotacionarAviao(90, 10, 10, listaAvioes)
-
-// console.log(listaAvioes)
