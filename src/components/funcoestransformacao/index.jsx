@@ -4,7 +4,7 @@ import './styles.css';
 function FuncoesTransformacao({ onTransladar, onEscalonar, onRotacionar }) {
     const [transladar, setTransladar] = useState({ x: '', y: '' });
     const [escalonar, setEscalonar] = useState({ x: '', y: '' });
-    const [rotacionar, setRotacionar] = useState({ x: '0', y: '0', angulo: '' });
+    const [rotacionar, setRotacionar] = useState({ x: 0, y: 0, angulo: '' });
 
     const handleChange = (setFunc) => (e) => {
         const { name, value } = e.target;
@@ -18,7 +18,7 @@ function FuncoesTransformacao({ onTransladar, onEscalonar, onRotacionar }) {
     const handleSubmit = (action, data, resetFunc) => (e) => {
         e.preventDefault();
         action(data);
-        resetFunc({ x: '', y: '', angulo: '' });
+        resetFunc({ x: 0, y: 0, angulo: '' });
     };
 
     return (

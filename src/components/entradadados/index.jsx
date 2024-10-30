@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import {calcEquacaoVoo} from '../../funcoes/funcoes.js';
 import './styles.css';
 
 const EntradaDados = ({ addAviao }) => {
@@ -10,6 +11,7 @@ const EntradaDados = ({ addAviao }) => {
         y: '',
         direcao: '',
         velocidade: '',
+        coeficientesEquacao: [],
     });
 
     const alteraCampo = (e) => {
@@ -24,11 +26,18 @@ const EntradaDados = ({ addAviao }) => {
     const insereAviao = (e) => {
         e.preventDefault();
 
-        addAviao(formData);
+        const coeficientesEquacao = calcEquacaoVoo(formData.x, formData.y, formData.direcao);
+
+        const novoAviao = {
+            ...formData,
+            coeficientesEquacao: coeficientesEquacao,
+        };
+
+        addAviao(novoAviao);
 
         setIdInserir(idInserir + 1);
-
-        setFormData({ id: idInserir + 1, x: '', y: '', direcao: '', velocidade: '' });
+     
+        setFormData({ id: idInserir + 1, x: '', y: '', direcao: '', velocidade: '', coeficientesEquacao: []});
     };
 
     return (
