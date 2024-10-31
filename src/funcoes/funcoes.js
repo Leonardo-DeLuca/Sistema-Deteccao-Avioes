@@ -154,6 +154,91 @@ function verificaSeTempoMinimo(aviao1, aviao2, pontoDeEncontro, tempoMinimo){
     return null
 }
 
+function verificaDirecao(aviao, pontoEncontro){
+    let distanciaAtual, distanciaAposMovimento;
+    let anguloReduzido = aviao.direcao;
+
+    while(anguloReduzido > 360){
+        anguloReduzido -= 360;
+    }
+
+    if(anguloReduzido === 0 || anguloReduzido === 360){
+        distanciaAtual = distanciaMinimaDoisPontos(aviao.x, pontoEncontro[0], aviao.y, pontoEncontro[1]);
+        distanciaAposMovimento = distanciaMinimaDoisPontos(aviao.x + 1, pontoEncontro[0], aviao.y, pontoEncontro[1]);
+        
+        if(distanciaAposMovimento < distanciaAtual){
+            return true
+        }
+
+        return false
+    } else if(anguloReduzido === 90){
+        distanciaAtual = distanciaMinimaDoisPontos(aviao.x, pontoEncontro[0], aviao.y, pontoEncontro[1]);
+        distanciaAposMovimento = distanciaMinimaDoisPontos(aviao.x, pontoEncontro[0], aviao.y + 1, pontoEncontro[1]);
+        
+        if(distanciaAposMovimento < distanciaAtual){
+            return true
+        }
+
+        return false
+    } else if(anguloReduzido === 180){
+        distanciaAtual = distanciaMinimaDoisPontos(aviao.x, pontoEncontro[0], aviao.y, pontoEncontro[1]);
+        distanciaAposMovimento = distanciaMinimaDoisPontos(aviao.x - 1, pontoEncontro[0], aviao.y, pontoEncontro[1]);
+        
+        if(distanciaAposMovimento < distanciaAtual){
+            return true
+        }
+
+        return false
+    } else if(anguloReduzido === 270){
+        distanciaAtual = distanciaMinimaDoisPontos(aviao.x, pontoEncontro[0], aviao.y, pontoEncontro[1]);
+        distanciaAposMovimento = distanciaMinimaDoisPontos(aviao.x, pontoEncontro[0], aviao.y - 1, pontoEncontro[1]);
+        
+        if(distanciaAposMovimento < distanciaAtual){
+            return true
+        }
+
+        return false
+    } else if(anguloReduzido > 0 && anguloReduzido < 90){
+        distanciaAtual = distanciaMinimaDoisPontos(aviao.x, pontoEncontro[0], aviao.y, pontoEncontro[1]);
+        distanciaAposMovimento = distanciaMinimaDoisPontos(aviao.x + 1, pontoEncontro[0], aviao.y + 1, pontoEncontro[1]);
+        
+        if(distanciaAposMovimento < distanciaAtual){
+            return true
+        }
+
+        return false
+    } else if(anguloReduzido > 90 && anguloReduzido < 180){
+        distanciaAtual = distanciaMinimaDoisPontos(aviao.x, pontoEncontro[0], aviao.y, pontoEncontro[1]);
+        distanciaAposMovimento = distanciaMinimaDoisPontos(aviao.x - 1, pontoEncontro[0], aviao.y + 1, pontoEncontro[1]);
+        
+        if(distanciaAposMovimento < distanciaAtual){
+            return true
+        }
+
+        return false
+    }  else if(anguloReduzido > 180 && anguloReduzido < 270){
+        distanciaAtual = distanciaMinimaDoisPontos(aviao.x, pontoEncontro[0], aviao.y, pontoEncontro[1]);
+        distanciaAposMovimento = distanciaMinimaDoisPontos(aviao.x - 1, pontoEncontro[0], aviao.y - 1, pontoEncontro[1]);
+        
+        if(distanciaAposMovimento < distanciaAtual){
+            return true
+        }
+
+        return false
+    } else if(anguloReduzido > 270 && anguloReduzido < 360){
+        distanciaAtual = distanciaMinimaDoisPontos(aviao.x, pontoEncontro[0], aviao.y, pontoEncontro[1]);
+        distanciaAposMovimento = distanciaMinimaDoisPontos(aviao.x + 1, pontoEncontro[0], aviao.y - 1, pontoEncontro[1]);
+        
+        if(distanciaAposMovimento < distanciaAtual){
+            return true
+        }
+
+        return false
+    }
+
+    return false
+}
+
 export const calcEquacaoVoo = (x, y, direcao) => {
 
     if (direcao === 90 || direcao === 270) {
@@ -259,7 +344,12 @@ export const tempoMinimoEntreAvioes = (tempoMinimo, listaAvioes) => {
 
                 if((verificaInclinacaoLinha(aviao1.coeficientesEquacao[0], aviao2.coeficientesEquacao[0]))){
                     if (temPontodeEncontro) {
-                        return verificaSeTempoMinimo(aviao1, aviao2,temPontodeEncontro, tempoMinimo);
+                        if(verificaDirecao(aviao1, temPontodeEncontro) && verificaDirecao(aviao2, temPontodeEncontro)){
+                            console.log(`ID: ${aviao1.id} ID2: ${aviao2.id} indo em direção`)
+                            return verificaSeTempoMinimo(aviao1, aviao2,temPontodeEncontro, tempoMinimo);
+                        }
+                        console.log(`ID: ${aviao1.id} ID2: ${aviao2.id} desencontro`)
+                        return null
                     }else{
                         console.log(`ID: ${aviao1.id} ID2: ${aviao2.id} são paralelos`);
                         return null;
@@ -267,7 +357,12 @@ export const tempoMinimoEntreAvioes = (tempoMinimo, listaAvioes) => {
                 }
 
                 if (temPontodeEncontro) {
-                    return verificaSeTempoMinimo(aviao1, aviao2,temPontodeEncontro, tempoMinimo);
+                    if(verificaDirecao(aviao1, temPontodeEncontro) && verificaDirecao(aviao2, temPontodeEncontro)){
+                        console.log(`ID: ${aviao1.id} ID2: ${aviao2.id} indo em direção`)
+                        return verificaSeTempoMinimo(aviao1, aviao2,temPontodeEncontro, tempoMinimo);
+                    }
+                    console.log(`ID: ${aviao1.id} ID2: ${aviao2.id} desencontro`);
+                    return null
                 }
             }
             return null
