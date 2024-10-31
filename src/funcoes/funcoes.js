@@ -1,18 +1,24 @@
 //Falta tratar avioes com mesma linha em direções convergentes (se necessário), angulos de 90 graus, 
 //aviões em direções opostas porém com linhas que se cruzam.
 
-function pertoSuficienteDeZero(num){
+function pertoSuficiente(num) {
+    const inteiroMaisProximo = Math.round(num);
+    
     if (Math.abs(num) < 1e-8) {
         return 0;
     }
 
-    return num
+    if (Math.abs(num - inteiroMaisProximo) < 1e-8) {
+        return inteiroMaisProximo;
+    }
+
+    return num;
 }
 
 function getTanFromDegrees(degrees) {
     let tanValor = Math.tan(degrees * (Math.PI / 180));
     
-    tanValor = pertoSuficienteDeZero(tanValor);
+    tanValor = pertoSuficiente(tanValor);
     
     return tanValor;
 }
@@ -125,8 +131,8 @@ function verificaMesmaReta(aviao1, aviao2){
         return aviao1.x === aviao2.x
     }
 
-    intercepto1 = pertoSuficienteDeZero(intercepto1);
-    intercepto2 = pertoSuficienteDeZero(intercepto2);
+    intercepto1 = pertoSuficiente(intercepto1);
+    intercepto2 = pertoSuficiente(intercepto2);
 
     return linear1 === linear2 && intercepto1 == intercepto2
 }
@@ -242,7 +248,6 @@ export const tempoMinimoEntreAvioes = (tempoMinimo, listaAvioes) => {
         return listaAvioes.map((aviao2, index2) => {
             if (index1 < index2) {
                 const temPontodeEncontro = pontoComum(aviao1, aviao2);
-                
                 if(verificaMesmaReta(aviao1, aviao2)){
                     console.log(`ID: ${aviao1.id} ID2: ${aviao2.id} são mesma reta`)
                     if(verificaOpostosMesmaLinha(aviao1.direcao, aviao2.direcao)){
