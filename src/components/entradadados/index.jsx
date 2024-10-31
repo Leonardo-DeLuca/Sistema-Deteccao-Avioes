@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import {calcEquacaoVoo} from '../../funcoes/funcoes.js';
+import {calcEquacaoVoo, getNumDuasCasas} from '../../funcoes/funcoes.js';
 import './styles.css';
 
 const EntradaDados = ({ addAviao }) => {
     const [idInserir, setIdInserir] = useState(1);
+    const [isPolar, setIsPolar] = useState(false);
 
     const [formData, setFormData] = useState({
         id: idInserir,
         x: '',
         y: '',
+        raio: '',
+        angulo: '',
         direcao: '',
         velocidade: '',
         coeficientesEquacao: [],
@@ -23,8 +26,26 @@ const EntradaDados = ({ addAviao }) => {
         });
     };
 
+    const togglePolar = () => {
+        setIsPolar(!isPolar);
+    };
+
     const insereAviao = (e) => {
         e.preventDefault();
+
+        if(isPolar) {
+            const x = formData.raio * Math.cos(formData.angulo);
+            const y = formData.raio * Math.sin(formData.angulo);
+            
+            formData.x = getNumDuasCasas(x);
+            formData.y = getNumDuasCasas(y);
+        }else{
+            const raio = Math.sqrt(formData.x ** 2 + formData.y ** 2);
+            const angulo = Math.atan2(formData.y, formData.x);
+                
+            formData.raio = getNumDuasCasas(raio);
+            formData.angulo = getNumDuasCasas(angulo);
+        }
 
         const coeficientesEquacao = calcEquacaoVoo(formData.x, formData.y, formData.direcao);
 
@@ -37,7 +58,7 @@ const EntradaDados = ({ addAviao }) => {
 
         setIdInserir(idInserir + 1);
      
-        setFormData({ id: idInserir + 1, x: '', y: '', direcao: '', velocidade: '', coeficientesEquacao: []});
+        setFormData({ id: idInserir + 1, x: '', y: '', raio: '', angulo: '', direcao: '', velocidade: '', coeficientesEquacao: []});
     };
 
     return (
@@ -48,26 +69,63 @@ const EntradaDados = ({ addAviao }) => {
                 <form onSubmit={insereAviao}>
                     <div className="form-row">
                         <label>
-                            X:
-                            <input
-                                type="number"
-                                name="x"
-                                value={formData.x}
-                                onChange={alteraCampo}
-                                required
+                            Cordenadas polares:
+                            <input 
+                                type="checkbox"  
+                                checked={isPolar} 
+                                onChange={togglePolar} 
                             />
                         </label>
+                    </div>
+                    <div className="form-row">
+                        {isPolar ? (
+                            <>
+                                <label>
+                                    Raio (raio):
+                                    <input
+                                        type="number"
+                                        name="raio"
+                                        value={formData.raio}
+                                        onChange={alteraCampo}
+                                        required
+                                    />
+                                </label>
+                                <label>
+                                    Ângulo (θ):
+                                    <input
+                                        type="number"
+                                        name="angulo"
+                                        value={formData.angulo}
+                                        onChange={alteraCampo}
+                                        required
+                                    />
+                                </label>
+                            </>
+                        ) : (
+                            <>
+                                <label>
+                                    X:
+                                    <input
+                                        type="number"
+                                        name="x"
+                                        value={formData.x}
+                                        onChange={alteraCampo}
+                                        required
+                                    />
+                                </label>
 
-                        <label>
-                            Y:
-                            <input
-                                type="number"
-                                name="y"
-                                value={formData.y}
-                                onChange={alteraCampo}
-                                required
-                            />
-                        </label>
+                                <label>
+                                    Y:
+                                    <input
+                                        type="number"
+                                        name="y"
+                                        value={formData.y}
+                                        onChange={alteraCampo}
+                                        required
+                                    />
+                                </label>
+                            </>
+                        )}
                     </div>
 
                     <div className="form-row">

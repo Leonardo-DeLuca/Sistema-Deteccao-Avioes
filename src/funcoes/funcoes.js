@@ -25,7 +25,7 @@ function getCosFromDegrees(degrees) {
     return Math.cos(degrees * (Math.PI / 180));
 }
 
-const getNumDuasCasas = (numero) => Number(numero.toFixed(2));
+export const getNumDuasCasas = (numero) => Number(numero.toFixed(2));
 
 function pontoComum(aviao1, aviao2) {
 
