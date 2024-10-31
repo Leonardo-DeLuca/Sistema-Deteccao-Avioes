@@ -172,7 +172,7 @@ export const tempoMinimoEntreAvioes = (tempoMinimo, listaAvioes) => {
                     let id1 = aviao1.id;
                     let id2 = aviao2.id;
 
-                    return{ id1, id2, diffTempo };
+                    return{ id1, id2, diffTempo, temPontodeEncontro };
                 }
             }
             }
