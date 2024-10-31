@@ -25,20 +25,52 @@ function getCosFromDegrees(degrees) {
     return Math.cos(degrees * (Math.PI / 180));
 }
 
-const getNumDuasCasas = (numero) => Math.floor(numero * 100) / 100;
+const getNumDuasCasas = (numero) => Number(numero.toFixed(2));
 
-function pontoComum(equ1, equ2) {
-    let coefX = getNumDuasCasas(equ1[0]) + -(getNumDuasCasas(equ2[0]));
+function pontoComum(aviao1, aviao2) {
 
-        let resto = -(equ1[1] + equ1[2]) + (equ2[1] + equ2[2]);
-        let valorXFinal = resto / coefX;
+    let equ1 = aviao1.coeficientesEquacao;
+    let equ2 = aviao2.coeficientesEquacao;
 
-        let valorYFinal = (equ1[0] * valorXFinal) + (equ1[0] * equ1[1]) + equ1[2]
+    const coef1 = getNumDuasCasas(equ1[0]);
+    const coef2 = getNumDuasCasas(equ2[0]);
+    const intercepto1 = -(equ1[1] + equ1[2]);
+    const intercepto2 = (equ2[1] + equ2[2]);
+    if (coef1 === Infinity || coef1 === -Infinity) {
+        const valorXFinal = getNumDuasCasas(aviao1.x);
+        const valorYFinal = getNumDuasCasas(coef2 * valorXFinal + intercepto2);
 
-        let coordenadaComum = [valorXFinal, valorYFinal]
+        const retorno = [valorXFinal, valorYFinal]
 
-        return coordenadaComum;
+        if(!retorno.includes(NaN) && !retorno.includes(Infinity)){
+            return retorno
+        }
+        return false;
+    } else if (coef2 === Infinity || coef2 === -Infinity) {
+        const valorXFinal = getNumDuasCasas(aviao2.x);
+        const valorYFinal = getNumDuasCasas(coef1 * valorXFinal + intercepto1);
+        
+        const retorno = [valorXFinal, valorYFinal]
 
+        if(!retorno.includes(NaN) && !retorno.includes(Infinity)){
+            return retorno
+        }
+
+        return false;
+    }
+
+    let coefX = coef1 - coef2;
+
+    if (coefX !== 0) {
+        let resto = intercepto2 - intercepto1;
+        let valorXFinal = getNumDuasCasas(resto / coefX);
+
+        let valorYFinal = getNumDuasCasas(coef1 * valorXFinal + intercepto1);
+
+        return [valorXFinal, valorYFinal];
+    }
+
+    return false;
 }
 
 function diferencaTempoPontoComum(tempoAviao1, tempoAviao2) {
@@ -88,21 +120,49 @@ function verificaMesmaReta(aviao1, aviao2){
 
     linear1 = getNumDuasCasas(linear1);
     linear2 = getNumDuasCasas(linear2);
+
+    if (linear1 === Infinity && linear2 === Infinity) {
+        return aviao1.x === aviao2.x
+    }
+
     intercepto1 = pertoSuficienteDeZero(intercepto1);
     intercepto2 = pertoSuficienteDeZero(intercepto2);
 
     return linear1 === linear2 && intercepto1 == intercepto2
 }
 
-export const calcEquacaoVoo = (x, y, direcao) => {
-    const tangDirecao = getTanFromDegrees(direcao);
+function verificaSeTempoMinimo(aviao1, aviao2, pontoDeEncontro, tempoMinimo){
+    let tempoAviao1 = tempoEmSegundosAtePonto(pontoDeEncontro[0], pontoDeEncontro[1], aviao1)
+    let tempoAviao2 = tempoEmSegundosAtePonto(pontoDeEncontro[0], pontoDeEncontro[1], aviao2)
 
+    let diffTempo = diferencaTempoPontoComum(tempoAviao1, tempoAviao2)
+
+    if (diffTempo <= tempoMinimo) {
+        let id1 = aviao1.id;
+        let id2 = aviao2.id;
+
+        console.log(`ID: ${aviao1.id} ID2: ${aviao2.id} são ponto de colisão dentro do tempo`)
+        return{ id1, id2, diffTempo, pontoDeEncontro };
+    }
+
+    return null
+}
+
+export const calcEquacaoVoo = (x, y, direcao) => {
+
+    if (direcao === 90 || direcao === 270) {
+        const a1 = Infinity;
+        const a2 = 0;
+        const a3 = y;
+        return [a1, a2, a3];
+    }
+
+    const tangDirecao = getTanFromDegrees(direcao);
     let a1 = Number.parseFloat(tangDirecao);
-    let a2 = tangDirecao * -(x);
+    let a2 = tangDirecao * -x;
     let a3 = y;
 
     const coeficientes = [a1, a2, a3];
-
     return coeficientes;
 }
 
@@ -181,35 +241,31 @@ export const tempoMinimoEntreAvioes = (tempoMinimo, listaAvioes) => {
     return listaAvioes.flatMap((aviao1, index1) => {
         return listaAvioes.map((aviao2, index2) => {
             if (index1 < index2) {
-                const temPontodeEncontro = pontoComum(aviao1.coeficientesEquacao, aviao2.coeficientesEquacao);
-
+                const temPontodeEncontro = pontoComum(aviao1, aviao2);
+                
                 if(verificaMesmaReta(aviao1, aviao2)){
-                    console.log('mesma reta')
+                    console.log(`ID: ${aviao1.id} ID2: ${aviao2.id} são mesma reta`)
                     if(verificaOpostosMesmaLinha(aviao1.direcao, aviao2.direcao)){
-                        console.log('opostos na mesma reta')
+                        console.log(`ID: ${aviao1.id} ID2: ${aviao2.id} são opostos na mesma reta`)
                         return null;
                     }
+                    return null;
                 }
 
-                if((verificaInclinacaoLinha(aviao1.coeficientesEquacao[0]) == verificaInclinacaoLinha(aviao2.coeficientesEquacao[0]))){
+                if((verificaInclinacaoLinha(aviao1.coeficientesEquacao[0], aviao2.coeficientesEquacao[0]))){
                     if (temPontodeEncontro) {
-                        let tempoAviao1 = tempoEmSegundosAtePonto(temPontodeEncontro[0], temPontodeEncontro[1], aviao1)
-                        let tempoAviao2 = tempoEmSegundosAtePonto(temPontodeEncontro[0], temPontodeEncontro[1], aviao2)
-
-                        let diffTempo = diferencaTempoPontoComum(tempoAviao1, tempoAviao2)
-
-                        if (diffTempo <= tempoMinimo) {
-                            let id1 = aviao1.id;
-                            let id2 = aviao2.id;
-
-                            return{ id1, id2, diffTempo, temPontodeEncontro };
-                        }
-                    }
-                    console.log('paralelos')
-                    return null
+                        return verificaSeTempoMinimo(aviao1, aviao2,temPontodeEncontro, tempoMinimo);
+                    }else{
+                        console.log(`ID: ${aviao1.id} ID2: ${aviao2.id} são paralelos`);
+                        return null;
+                    }   
                 }
-                
+
+                if (temPontodeEncontro) {
+                    return verificaSeTempoMinimo(aviao1, aviao2,temPontodeEncontro, tempoMinimo);
+                }
             }
+            return null
         });
     }).filter(item => item !== null);
 }
