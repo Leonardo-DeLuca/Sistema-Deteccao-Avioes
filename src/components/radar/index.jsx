@@ -37,6 +37,14 @@ const Radar = ({ avioes }) => {
             title: {
                 display: false,
             },
+            tooltip: {
+                enabled: true,
+                callbacks: {
+                    label: function ({raw}){
+                        return `Id: ${raw.id} Coordenada: (${raw.x}, ${raw.y}) Direção: ${raw.direcao} Velocidade: ${raw.velocidade}`
+                    }
+                }
+            },
         },
         scales: {
             x: {

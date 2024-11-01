@@ -40,7 +40,7 @@ function pontoComum(aviao1, aviao2) {
 
     const coef1 = getNumDuasCasas(equ1[0]);
     const coef2 = getNumDuasCasas(equ2[0]);
-    const intercepto1 = -(equ1[1] + equ1[2]);
+    const intercepto1 = (equ1[1] + equ1[2]);
     const intercepto2 = (equ2[1] + equ2[2]);
     if (coef1 === Infinity || coef1 === -Infinity) {
         const valorXFinal = getNumDuasCasas(aviao1.x);
@@ -193,86 +193,47 @@ function pontoDeEncontroMesmaReta(aviao1, aviao2) {
 function verificaDirecao(aviao, pontoEncontro){
     let distanciaAtual, distanciaAposMovimento;
     let anguloReduzido = aviao.direcao;
+    
+    distanciaAtual = distanciaMinimaDoisPontos(aviao.x, pontoEncontro[0], aviao.y, pontoEncontro[1]);
 
     while(anguloReduzido > 360){
         anguloReduzido -= 360;
     }
 
     if(anguloReduzido === 0 || anguloReduzido === 360){
-        distanciaAtual = distanciaMinimaDoisPontos(aviao.x, pontoEncontro[0], aviao.y, pontoEncontro[1]);
         distanciaAposMovimento = distanciaMinimaDoisPontos(aviao.x + 1, pontoEncontro[0], aviao.y, pontoEncontro[1]);
         
-        if(distanciaAposMovimento < distanciaAtual){
-            return true
-        }
-
-        return false
+        return distanciaAposMovimento < distanciaAtual
     } else if(anguloReduzido === 90){
-        distanciaAtual = distanciaMinimaDoisPontos(aviao.x, pontoEncontro[0], aviao.y, pontoEncontro[1]);
         distanciaAposMovimento = distanciaMinimaDoisPontos(aviao.x, pontoEncontro[0], aviao.y + 1, pontoEncontro[1]);
         
-        if(distanciaAposMovimento < distanciaAtual){
-            return true
-        }
-
-        return false
+        return distanciaAposMovimento < distanciaAtual
     } else if(anguloReduzido === 180){
-        distanciaAtual = distanciaMinimaDoisPontos(aviao.x, pontoEncontro[0], aviao.y, pontoEncontro[1]);
         distanciaAposMovimento = distanciaMinimaDoisPontos(aviao.x - 1, pontoEncontro[0], aviao.y, pontoEncontro[1]);
         
-        if(distanciaAposMovimento < distanciaAtual){
-            return true
-        }
-
-        return false
+        return distanciaAposMovimento < distanciaAtual
     } else if(anguloReduzido === 270){
-        distanciaAtual = distanciaMinimaDoisPontos(aviao.x, pontoEncontro[0], aviao.y, pontoEncontro[1]);
         distanciaAposMovimento = distanciaMinimaDoisPontos(aviao.x, pontoEncontro[0], aviao.y - 1, pontoEncontro[1]);
         
-        if(distanciaAposMovimento < distanciaAtual){
-            return true
-        }
-
-        return false
+        return distanciaAposMovimento < distanciaAtual
     } else if(anguloReduzido > 0 && anguloReduzido < 90){
-        distanciaAtual = distanciaMinimaDoisPontos(aviao.x, pontoEncontro[0], aviao.y, pontoEncontro[1]);
         distanciaAposMovimento = distanciaMinimaDoisPontos(aviao.x + 1, pontoEncontro[0], aviao.y + 1, pontoEncontro[1]);
         
-        if(distanciaAposMovimento < distanciaAtual){
-            return true
-        }
-
-        return false
+        return distanciaAposMovimento < distanciaAtual
     } else if(anguloReduzido > 90 && anguloReduzido < 180){
-        distanciaAtual = distanciaMinimaDoisPontos(aviao.x, pontoEncontro[0], aviao.y, pontoEncontro[1]);
         distanciaAposMovimento = distanciaMinimaDoisPontos(aviao.x - 1, pontoEncontro[0], aviao.y + 1, pontoEncontro[1]);
         
-        if(distanciaAposMovimento < distanciaAtual){
-            return true
-        }
-
-        return false
+        return distanciaAposMovimento < distanciaAtual
     }  else if(anguloReduzido > 180 && anguloReduzido < 270){
-        distanciaAtual = distanciaMinimaDoisPontos(aviao.x, pontoEncontro[0], aviao.y, pontoEncontro[1]);
         distanciaAposMovimento = distanciaMinimaDoisPontos(aviao.x - 1, pontoEncontro[0], aviao.y - 1, pontoEncontro[1]);
         
-        if(distanciaAposMovimento < distanciaAtual){
-            return true
-        }
-
-        return false
-    } else if(anguloReduzido > 270 && anguloReduzido < 360){
-        distanciaAtual = distanciaMinimaDoisPontos(aviao.x, pontoEncontro[0], aviao.y, pontoEncontro[1]);
+        return distanciaAposMovimento < distanciaAtual
+    } else {
         distanciaAposMovimento = distanciaMinimaDoisPontos(aviao.x + 1, pontoEncontro[0], aviao.y - 1, pontoEncontro[1]);
         
-        if(distanciaAposMovimento < distanciaAtual){
-            return true
-        }
-
-        return false
+        return distanciaAposMovimento < distanciaAtual
     }
 
-    return false
 }
 
 export const calcEquacaoVoo = (x, y, direcao) => {
@@ -388,7 +349,6 @@ export const tempoMinimoEntreAvioes = (tempoMinimo, listaAvioes) => {
 
                     if(verificaOpostosMesmaLinha(aviao1.direcao, aviao2.direcao)){
                         console.log(`ID: ${aviao1.id} ID2: ${aviao2.id} indo em direção`)
-                        debugger
                         temPontodeEncontro = pontoDeEncontroMesmaReta(aviao1, aviao2);
 
                         return verificaSeTempoMinimo(aviao1, aviao2,temPontodeEncontro, tempoMinimo);
