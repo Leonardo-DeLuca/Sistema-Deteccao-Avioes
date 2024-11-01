@@ -3,6 +3,7 @@ import EntradaDados from './components/entradadados/index.jsx';
 import FuncoesTransformacao from './components/funcoestransformacao/index.jsx';
 import FuncoesRastreamento from './components/funcoesrastreamento/index.jsx';
 import DataGrid from './components/datagrid/index.jsx';
+import Relatorio from './components/relatorio/index.jsx'
 import Radar from './components/radar/index.jsx';
 import './index.css';
 import { distanciaMinimaAeroporto, distanciaMinimaEntreAvioes, escalonarAviao, rotacionarAviao, tempoMinimoEntreAvioes, transladarAviao } from './funcoes/funcoes.js';
@@ -11,6 +12,7 @@ const App = () => {
 	const [avioes, setAvioes] = useState([]);
 	const [avioesSelecionados, setAvioesSelecionados] = useState([]);
 	const [avioesRadar, setAvioesRadar] = useState([]);
+	const [avioesRelatorio, setAvioesRelatorio] = useState([]);
 
 	const addAviao = (novoAviao) => {
 		setAvioes([...avioes, novoAviao]);
@@ -78,22 +80,48 @@ const App = () => {
 
 	const onAeroProx = (data) => {
 		
-		const avioesComDistanciaMinima = distanciaMinimaAeroporto(data, avioes);
+		const avioesDistanciaMinimaAeroporto = distanciaMinimaAeroporto(data, avioes);
 
-		console.log(avioesComDistanciaMinima)
+		let mensagensRelatorio = []
+		
+		avioesDistanciaMinimaAeroporto.forEach(element => {
+		
+			mensagensRelatorio.push(	
+				`O avião ${element[0]} está a uma distância de ${element[1]} do aeroporto.`
+			)
+		})
+
+		setAvioesRelatorio(mensagensRelatorio);
 	};
 
 	const onAviProx = (data) => {
-		const avioesComDistanciaMinimaEntreSi = distanciaMinimaEntreAvioes(data, avioes);
+		const avioesComDistanciaMinima = distanciaMinimaEntreAvioes(data, avioes);
+		
+		let mensagensRelatorio = []
+		
+		avioesComDistanciaMinima.forEach(element => {
+		
+			mensagensRelatorio.push(	
+				`O avião ${element[0]} e o avião ${element[1]} estão a uma distância de: ${element[2]}`
+			)
+		})
 
-		console.log(avioesComDistanciaMinimaEntreSi)
+		setAvioesRelatorio(mensagensRelatorio);
 	}
 
 	const onRotaColisao = (data) => {
-		const avioesEmRotaDeColisao= tempoMinimoEntreAvioes(data, avioes);
+		const avioesEmRotaDeColisao = tempoMinimoEntreAvioes(data, avioes);
 		
-		console.log(avioes)
-		console.log(avioesEmRotaDeColisao)
+		let mensagensRelatorio = []
+		
+		avioesEmRotaDeColisao.forEach(element => {
+		
+			mensagensRelatorio.push(	
+				`O avião ${element[0]} e o avião ${element[1]} passarão pelo ponto ${element[3]} com uma diferença de ${element[2]}s.`
+			)
+		})
+
+		setAvioesRelatorio(mensagensRelatorio);
 	}
 	
 	return (
@@ -104,7 +132,10 @@ const App = () => {
 				<FuncoesRastreamento onAeroProx={onAeroProx} onAviProx={onAviProx} onEmColisao={onRotaColisao} />
 			</div>
 			
-			<Radar avioes={avioesRadar} />
+			<div>
+				<Radar avioes={avioesRadar} />
+				<Relatorio avioesRelatorio={avioesRelatorio}/>
+			</div>
 
 			<div>
 				<DataGrid avioes={avioes} avioesSelecionados={avioesSelecionados} setAvioesSelecionados={setAvioesSelecionados} />

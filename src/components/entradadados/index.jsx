@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {calcEquacaoVoo, getNumDuasCasas} from '../../funcoes/funcoes.js';
+import {calcEquacaoVoo, getCosFromDegrees, getNumDuasCasas, getSinFromDegrees} from '../../funcoes/funcoes.js';
 import './styles.css';
 
 const EntradaDados = ({ addAviao }) => {
@@ -34,14 +34,14 @@ const EntradaDados = ({ addAviao }) => {
         e.preventDefault();
 
         if(isPolar) {
-            const x = formData.raio * Math.cos(formData.angulo);
-            const y = formData.raio * Math.sin(formData.angulo);
+            const x = formData.raio * getCosFromDegrees(formData.angulo);
+            const y = formData.raio * getSinFromDegrees(formData.angulo);
             
             formData.x = getNumDuasCasas(x);
             formData.y = getNumDuasCasas(y);
         }else{
             const raio = Math.sqrt(formData.x ** 2 + formData.y ** 2);
-            const angulo = Math.atan2(formData.y, formData.x);
+            const angulo = Math.atan2(formData.y, formData.x) * (180/Math.PI);
                 
             formData.raio = getNumDuasCasas(raio);
             formData.angulo = getNumDuasCasas(angulo);
@@ -68,8 +68,8 @@ const EntradaDados = ({ addAviao }) => {
             <div className="form-container">
                 <form onSubmit={insereAviao}>
                     <div className="form-row">
-                        <label>
-                            Cordenadas polares:
+                        <label className='polar'>
+                            <p> Cordenadas polares:</p>
                             <input 
                                 type="checkbox"  
                                 checked={isPolar} 
@@ -91,7 +91,7 @@ const EntradaDados = ({ addAviao }) => {
                                     />
                                 </label>
                                 <label>
-                                    Ângulo (θ):
+                                    Ângulo (°):
                                     <input
                                         type="number"
                                         name="angulo"

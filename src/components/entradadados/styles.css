@@ -61,3 +61,26 @@ button {
 button:hover {
     background-color: #45a049;
 }
+
+.polar {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    flex-direction: row;
+}
+
+.polar {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    flex-direction: row;
+}
+
+.polar p {
+    flex: 1;
+    margin: 0;
+}
+
+.polar input {
+    flex: 1;
+}

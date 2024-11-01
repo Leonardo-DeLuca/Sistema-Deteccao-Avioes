@@ -15,7 +15,7 @@ function pertoSuficiente(num) {
     return num;
 }
 
-function getTanFromDegrees(degrees) {
+export const getTanFromDegrees = (degrees) =>{
     let tanValor = Math.tan(degrees * (Math.PI / 180));
     
     tanValor = pertoSuficiente(tanValor);
@@ -23,11 +23,11 @@ function getTanFromDegrees(degrees) {
     return tanValor;
 }
 
-function getSinFromDegrees(degrees) {
+export const getSinFromDegrees = (degrees) =>{
     return Math.sin(degrees * (Math.PI / 180));
 }
 
-function getCosFromDegrees(degrees) {
+export const getCosFromDegrees = (degrees) =>{
     return Math.cos(degrees * (Math.PI / 180));
 }
 
@@ -80,7 +80,7 @@ function pontoComum(aviao1, aviao2) {
 }
 
 function diferencaTempoPontoComum(tempoAviao1, tempoAviao2) {
-    return Math.abs(tempoAviao2 - tempoAviao1);
+    return getNumDuasCasas(Math.abs(tempoAviao2 - tempoAviao1));
 }
 
 function distanciaMinimaDoisPontos(x1, x2, y1, y2) {
@@ -98,7 +98,7 @@ function tempoEmSegundosAtePonto(xFinal, yFinal, aviao) {
 }
 
 function verificaOpostosMesmaLinha(direcaoAviao1, direcaoAviao2){
-    const diferenca = Math.abs(direcaoAviao1 - direcaoAviao2);
+    let diferenca = Math.abs(direcaoAviao1 - direcaoAviao2);
 
     while(diferenca > 180){
         diferenca -= 360
@@ -148,10 +148,46 @@ function verificaSeTempoMinimo(aviao1, aviao2, pontoDeEncontro, tempoMinimo){
         let id2 = aviao2.id;
 
         console.log(`ID: ${aviao1.id} ID2: ${aviao2.id} são ponto de colisão dentro do tempo`)
-        return{ id1, id2, diffTempo, pontoDeEncontro };
+        return[ id1, id2, diffTempo, pontoDeEncontro ];
     }
 
     return null
+}
+
+function pontoDeEncontroMesmaReta(aviao1, aviao2) {
+        const { x: xA, y: yA, velocidade: vA, direcao: anguloA } = aviao1;
+        const { x: xB, y: yB, velocidade: vB, direcao: anguloB } = aviao2;
+    
+        // Calcula componentes da velocidade
+        const vAX = vA * getCosFromDegrees(anguloA);
+        const vAY = vA * getSinFromDegrees(anguloA);
+        const vBX = vB * getCosFromDegrees(anguloB);
+        const vBY = vB * getSinFromDegrees(anguloB);
+
+        const tX = (xB - xA) / (vAX - vBX);
+        const tY = (yB - yA) / (vAY - vBY);
+    
+        if (xA === xB) {
+            if (tY < 0) {
+                return null;
+            }
+            const pontoX = xA;
+            const pontoY = getNumDuasCasas(pertoSuficiente(yA + vAY * tY));
+            return [pontoX, pontoY];
+        }
+
+        if (yA === yB) {
+            if (tX < 0) {
+                return null;
+            }
+            const pontoX = getNumDuasCasas(pertoSuficiente(xA + vAX * tX));
+            const pontoY = yA;
+            return [pontoX, pontoY];
+        }
+
+        const pontoX = getNumDuasCasas(pertoSuficiente(xA + vAY * tX));
+        const pontoY = getNumDuasCasas(pertoSuficiente(yA + vAY * tY));
+        return [pontoX, pontoY];
 }
 
 function verificaDirecao(aviao, pontoEncontro){
@@ -301,7 +337,7 @@ export const distanciaMinimaAeroporto = (distanciaMinima, listaAvioes) => {
             let id = aviao.id;
             let distancia = getNumDuasCasas(distanciaAeroporto);
 
-            return {id, distancia}
+            return [id, distancia]
         }
         
         return null
@@ -316,11 +352,11 @@ export const distanciaMinimaEntreAvioes = (distanciaMinima, listaAvioes) => {
                 const distancia = distanciaMinimaDoisPontos(aviao1.x, aviao2.x, aviao1.y, aviao2.y);
                 
                 if (distancia <= distanciaMinima) {
-                    return {
-                        id1: aviao1.id,
-                        id2: aviao2.id,
-                        distancia: getNumDuasCasas(distancia)
-                    };
+                    return [
+                        aviao1.id,
+                        aviao2.id,
+                        getNumDuasCasas(distancia)
+                    ];
                 }
             }
             return null;
@@ -332,12 +368,17 @@ export const tempoMinimoEntreAvioes = (tempoMinimo, listaAvioes) => {
     return listaAvioes.flatMap((aviao1, index1) => {
         return listaAvioes.map((aviao2, index2) => {
             if (index1 < index2) {
-                const temPontodeEncontro = pontoComum(aviao1, aviao2);
+                let temPontodeEncontro = pontoComum(aviao1, aviao2);
+
                 if(verificaMesmaReta(aviao1, aviao2)){
                     console.log(`ID: ${aviao1.id} ID2: ${aviao2.id} são mesma reta`)
+
                     if(verificaOpostosMesmaLinha(aviao1.direcao, aviao2.direcao)){
-                        console.log(`ID: ${aviao1.id} ID2: ${aviao2.id} são opostos na mesma reta`)
-                        return null;
+                        console.log(`ID: ${aviao1.id} ID2: ${aviao2.id} indo em direção`)
+                        debugger
+                        temPontodeEncontro = pontoDeEncontroMesmaReta(aviao1, aviao2);
+
+                        return verificaSeTempoMinimo(aviao1, aviao2,temPontodeEncontro, tempoMinimo);
                     }
                     return null;
                 }
@@ -346,12 +387,15 @@ export const tempoMinimoEntreAvioes = (tempoMinimo, listaAvioes) => {
                     if (temPontodeEncontro) {
                         if(verificaDirecao(aviao1, temPontodeEncontro) && verificaDirecao(aviao2, temPontodeEncontro)){
                             console.log(`ID: ${aviao1.id} ID2: ${aviao2.id} indo em direção`)
+
                             return verificaSeTempoMinimo(aviao1, aviao2,temPontodeEncontro, tempoMinimo);
                         }
                         console.log(`ID: ${aviao1.id} ID2: ${aviao2.id} desencontro`)
+
                         return null
                     }else{
                         console.log(`ID: ${aviao1.id} ID2: ${aviao2.id} são paralelos`);
+
                         return null;
                     }   
                 }
@@ -359,9 +403,11 @@ export const tempoMinimoEntreAvioes = (tempoMinimo, listaAvioes) => {
                 if (temPontodeEncontro) {
                     if(verificaDirecao(aviao1, temPontodeEncontro) && verificaDirecao(aviao2, temPontodeEncontro)){
                         console.log(`ID: ${aviao1.id} ID2: ${aviao2.id} indo em direção`)
+
                         return verificaSeTempoMinimo(aviao1, aviao2,temPontodeEncontro, tempoMinimo);
                     }
                     console.log(`ID: ${aviao1.id} ID2: ${aviao2.id} desencontro`);
+
                     return null
                 }
             }
