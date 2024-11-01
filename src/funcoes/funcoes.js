@@ -295,17 +295,25 @@ export const calcEquacaoVoo = (x, y, direcao) => {
 
 export const transladarAviao = (x, y, listaAvioes) => {
     return listaAvioes.map(aviao => {
+        if(Math.abs(aviao.x + x) > 100 || Math.abs(aviao.y + y) > 100){
+            return null
+        }
+
         aviao.x = getNumDuasCasas(aviao.x + x);
         aviao.y = getNumDuasCasas(aviao.y + y);
         aviao.coeficientesEquacao = calcEquacaoVoo(aviao.x, aviao.y, aviao.direcao);
+        
         return aviao;
     });
 };
 
 export const escalonarAviao = (x, y, listaAvioes) => {
     return listaAvioes.map(aviao => {
-        
-        aviao.x = getNumDuasCasas(aviao.x * y);
+        if(Math.abs(aviao.x * x) > 100 || Math.abs(aviao.y * y) > 100){
+            return null
+        }
+
+        aviao.x = getNumDuasCasas(aviao.x * x);
         aviao.y = getNumDuasCasas(aviao.y * y);
         aviao.coeficientesEquacao = calcEquacaoVoo(aviao.x, aviao.y, aviao.direcao);
         return aviao;
@@ -320,8 +328,13 @@ export const rotacionarAviao = (angulo, centroX, centroY, listaAvioes) => {
         const xRotacao = xOrigem * getCosFromDegrees(angulo) - yOrigem * getSinFromDegrees(angulo);
         const yRotacao = xOrigem * getSinFromDegrees(angulo) + yOrigem * getCosFromDegrees(angulo);
 
+        if(Math.abs(getNumDuasCasas(xRotacao + centroX)) > 100 || Math.abs(getNumDuasCasas(yRotacao + centroY)) > 100){
+            return null
+        }
+        
         aviao.x = getNumDuasCasas(xRotacao + centroX);
         aviao.y = getNumDuasCasas(yRotacao + centroY);
+        
 
         aviao.coeficientesEquacao = calcEquacaoVoo(aviao.x, aviao.y, aviao.direcao);
         

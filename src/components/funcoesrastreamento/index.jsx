@@ -24,7 +24,7 @@ function FuncoesRastreamento({ onAeroProx, onAviProx, onEmColisao }) {
             <div className="horizontal-panel">
                 <form className="subpanel" onSubmit={handleSubmit(onAeroProx, distAero, setDistAero)}>
                     <label className='label-rastreamento'>
-                        Distância mínima:
+                        Distância mínima (Km):
                         <input
                             type="number"
                             className='input-rastreamento'
@@ -38,7 +38,7 @@ function FuncoesRastreamento({ onAeroProx, onAviProx, onEmColisao }) {
 
                 <form className="subpanel" onSubmit={handleSubmit(onAviProx, distAvi, setDistAvi)}>
                     <label className='label-rastreamento'>
-                        Distância mínima:
+                        Distância mínima (Km):
                         <input
                             type="number"
                             className='input-rastreamento'
@@ -52,7 +52,7 @@ function FuncoesRastreamento({ onAeroProx, onAviProx, onEmColisao }) {
 
                 <form className="subpanel" onSubmit={handleSubmit(onEmColisao, tempoColisao, setTempoColisao)}>
                     <label className='label-rastreamento'>
-                        Tempo mínimo:
+                        Tempo mínimo (s):
                         <input
                             type="number"
                             className='input-rastreamento'

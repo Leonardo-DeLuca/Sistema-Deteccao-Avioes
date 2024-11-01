@@ -22,60 +22,71 @@ const App = () => {
 	const onTransladar = (data) => {
 		let avioesAtualizados = transladarAviao(data.x, data.y, avioesSelecionados)
 
-		const lookup = avioes.reduce((acc, obj) => {
-			acc[obj.id] = obj;
-			return acc;
-		}, {});
 
-		avioesAtualizados = [
-			...avioes.map(item => lookup[item.id] || item),
-			...avioesAtualizados.filter(obj => !lookup[obj.id])
-		];
-
-		setAvioes(avioesAtualizados)
-		setAvioesRadar(avioesAtualizados)
-
-		console.log(avioes)
-
+		if(!avioesAtualizados.includes(null)){
+			const lookup = avioes.reduce((acc, obj) => {
+				acc[obj.id] = obj;
+				return acc;
+			}, {});
+	
+			avioesAtualizados = [
+				...avioes.map(item => lookup[item.id] || item),
+				...avioesAtualizados.filter(obj => !lookup[obj.id])
+			];
+	
+			setAvioes(avioesAtualizados)
+			setAvioesRadar(avioesAtualizados)
+	
+		}else{
+			alert("Ação inválida! Algum avião sairá do radar após a translação.")
+		}
+		
 	};
 
 	const onEscalonar = (data) => {
 		let avioesAtualizados = escalonarAviao(data.x, data.y, avioesSelecionados)
 
-		const lookup = avioes.reduce((acc, obj) => {
-			acc[obj.id] = obj;
-			return acc;
-		}, {});
-
-		avioesAtualizados = [
-			...avioes.map(item => lookup[item.id] || item),
-			...avioesAtualizados.filter(obj => !lookup[obj.id])
-		];
-
-		setAvioes(avioesAtualizados)
-		setAvioesRadar(avioesAtualizados)
-
-		console.log(avioes)
+		if(!avioesAtualizados.includes(null)){
+			const lookup = avioes.reduce((acc, obj) => {
+				acc[obj.id] = obj;
+				return acc;
+			}, {});
+	
+			avioesAtualizados = [
+				...avioes.map(item => lookup[item.id] || item),
+				...avioesAtualizados.filter(obj => !lookup[obj.id])
+			];
+	
+			setAvioes(avioesAtualizados)
+			setAvioesRadar(avioesAtualizados)
+	
+		}else{
+			alert("Ação inválida! Algum avião sairá do radar após o escalonamento.")
+		}
 
 	};
 	
 	const onRotacionar = (data) => {
 		let avioesAtualizados = rotacionarAviao(data.angulo ,data.x, data.y, avioesSelecionados)
 
-		const lookup = avioes.reduce((acc, obj) => {
-			acc[obj.id] = obj;
-			return acc;
-		}, {});
+		if(!avioesAtualizados.includes(null)){
+			const lookup = avioes.reduce((acc, obj) => {
+				acc[obj.id] = obj;
+				return acc;
+			}, {});
+	
+			avioesAtualizados = [
+				...avioes.map(item => lookup[item.id] || item),
+				...avioesAtualizados.filter(obj => !lookup[obj.id])
+			];
+	
+			setAvioes(avioesAtualizados)
+			setAvioesRadar(avioesAtualizados)
+	
+		}else{
+			alert("Ação inválida! Algum avião sairá do radar após a rotação.")
+		}
 
-		avioesAtualizados = [
-			...avioes.map(item => lookup[item.id] || item),
-			...avioesAtualizados.filter(obj => !lookup[obj.id])
-		];
-
-		setAvioes(avioesAtualizados)
-		setAvioesRadar(avioesAtualizados)
-
-		console.log(avioes)
 	};
 
 	const onAeroProx = (data) => {

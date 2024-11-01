@@ -33,13 +33,24 @@ const EntradaDados = ({ addAviao }) => {
     const insereAviao = (e) => {
         e.preventDefault();
 
+
         if(isPolar) {
             const x = formData.raio * getCosFromDegrees(formData.angulo);
             const y = formData.raio * getSinFromDegrees(formData.angulo);
             
+            if(Math.abs(x) > 100 || Math.abs(y) > 100){
+                alert('Coordenada inserida ultrapassa o alcance do radar (100km)!')
+                return;
+            }
+
             formData.x = getNumDuasCasas(x);
             formData.y = getNumDuasCasas(y);
         }else{
+            if(Math.abs(formData.x) > 100 || Math.abs(formData.y) > 100){
+                alert('Coordenada inserida ultrapassa o alcance do radar (100km)!')
+                return;
+            }
+
             const raio = Math.sqrt(formData.x ** 2 + formData.y ** 2);
             const angulo = Math.atan2(formData.y, formData.x) * (180/Math.PI);
                 
