@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {calcEquacaoVoo, getCosFromDegrees, getNumDuasCasas, getSinFromDegrees} from '../../funcoes/funcoes.js';
+import { calcEquacaoVoo, getCosFromDegrees, getNumDuasCasas, getSinFromDegrees } from '../../funcoes/funcoes.js';
 import './styles.css';
 
 const EntradaDados = ({ addAviao }) => {
@@ -34,26 +34,26 @@ const EntradaDados = ({ addAviao }) => {
         e.preventDefault();
 
 
-        if(isPolar) {
+        if (isPolar) {
             const x = formData.raio * getCosFromDegrees(formData.angulo);
             const y = formData.raio * getSinFromDegrees(formData.angulo);
-            
-            if(Math.abs(x) > 100 || Math.abs(y) > 100){
+
+            if (Math.abs(x) > 100 || Math.abs(y) > 100) {
                 alert('Coordenada inserida ultrapassa o alcance do radar (100km)!')
                 return;
             }
 
             formData.x = getNumDuasCasas(x);
             formData.y = getNumDuasCasas(y);
-        }else{
-            if(Math.abs(formData.x) > 100 || Math.abs(formData.y) > 100){
+        } else {
+            if (Math.abs(formData.x) > 100 || Math.abs(formData.y) > 100) {
                 alert('Coordenada inserida ultrapassa o alcance do radar (100km)!')
                 return;
             }
 
             const raio = Math.sqrt(formData.x ** 2 + formData.y ** 2);
-            const angulo = Math.atan2(formData.y, formData.x) * (180/Math.PI);
-                
+            const angulo = Math.atan2(formData.y, formData.x) * (180 / Math.PI);
+
             formData.raio = getNumDuasCasas(raio);
             formData.angulo = getNumDuasCasas(angulo);
         }
@@ -68,25 +68,25 @@ const EntradaDados = ({ addAviao }) => {
         addAviao(novoAviao);
 
         setIdInserir(idInserir + 1);
-     
-        setFormData({ id: idInserir + 1, x: '', y: '', raio: '', angulo: '', direcao: '', velocidade: '', coeficientesEquacao: []});
+
+        setFormData({ id: idInserir + 1, x: '', y: '', raio: '', angulo: '', direcao: '', velocidade: '', coeficientesEquacao: [] });
     };
 
     return (
         <div className='containerEntradaDados'>
             <h1>Entrada de dados</h1>
-            
+
             <div className="form-container">
                 <form onSubmit={insereAviao}>
                     <div className="form-row">
-                        <label className='polar'>
-                            <p> Cordenadas polares:</p>
-                            <input 
-                                type="checkbox"  
-                                checked={isPolar} 
-                                onChange={togglePolar} 
+                        <div className='polar'>
+                            <input
+                                type="checkbox"
+                                checked={isPolar}
+                                onChange={togglePolar}
                             />
-                        </label>
+                            <p> Coordenadas polares</p>
+                        </div>
                     </div>
                     <div className="form-row">
                         {isPolar ? (

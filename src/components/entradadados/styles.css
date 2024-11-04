@@ -64,23 +64,14 @@ button:hover {
 
 .polar {
     display: flex;
-    align-items: center;
-    width: 100%;
-    flex-direction: row;
-}
-
-.polar {
-    display: flex;
-    align-items: center;
-    width: 100%;
-    flex-direction: row;
 }
 
 .polar p {
-    flex: 1;
+    width: 100%;
     margin: 0;
 }
 
 .polar input {
-    flex: 1;
+    flex: 0;
+    margin-right: 10px;
 }
