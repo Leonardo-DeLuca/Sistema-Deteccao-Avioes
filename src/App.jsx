@@ -98,7 +98,7 @@ const App = () => {
 		avioesDistanciaMinimaAeroporto.forEach(element => {
 		
 			mensagensRelatorio.push(	
-				`O avião ${element[0]} está a uma distância de ${element[1]} do aeroporto.`
+				`O avião ${element[0]} está a uma distância de ${element[1]}km do aeroporto.`
 			)
 		})
 
@@ -113,7 +113,7 @@ const App = () => {
 		avioesComDistanciaMinima.forEach(element => {
 		
 			mensagensRelatorio.push(	
-				`O avião ${element[0]} e o avião ${element[1]} estão a uma distância de: ${element[2]}`
+				`O avião ${element[0]} e o avião ${element[1]} estão a uma distância de: ${element[2]}km`
 			)
 		})
 
