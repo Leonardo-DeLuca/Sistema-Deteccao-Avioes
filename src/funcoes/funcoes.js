@@ -140,7 +140,11 @@ function verificaSeTempoMinimo(aviao1, aviao2, pontoDeEncontro, tempoMinimo) {
     let tempoAviao1 = tempoEmSegundosAtePonto(pontoDeEncontro[0], pontoDeEncontro[1], aviao1)
     let tempoAviao2 = tempoEmSegundosAtePonto(pontoDeEncontro[0], pontoDeEncontro[1], aviao2)
 
-    let diffTempo = diferencaTempoPontoComum(tempoAviao1, tempoAviao2)
+    let diffTempo = diferencaTempoPontoComum(tempoAviao1, tempoAviao2);
+
+    if(diffTempo < 1){
+        diffTempo = Math.floor(diffTempo);
+    }
 
     if (diffTempo <= tempoMinimo) {
         let id1 = aviao1.id;
@@ -154,6 +158,7 @@ function verificaSeTempoMinimo(aviao1, aviao2, pontoDeEncontro, tempoMinimo) {
 }
 
 function pontoDeEncontroMesmaReta(aviao1, aviao2) {
+
     const { x: xA, y: yA, velocidade: vA, direcao: anguloA } = aviao1;
     const { x: xB, y: yB, velocidade: vB, direcao: anguloB } = aviao2;
 
@@ -348,10 +353,15 @@ export const tempoMinimoEntreAvioes = (tempoMinimo, listaAvioes) => {
                     console.log(`ID: ${aviao1.id} ID2: ${aviao2.id} são mesma reta`)
 
                     if (verificaOpostosMesmaLinha(aviao1.direcao, aviao2.direcao)) {
+                        
                         console.log(`ID: ${aviao1.id} ID2: ${aviao2.id} indo em direção`)
                         temPontodeEncontro = pontoDeEncontroMesmaReta(aviao1, aviao2);
 
-                        return verificaSeTempoMinimo(aviao1, aviao2, temPontodeEncontro, tempoMinimo);
+                        if(temPontodeEncontro){
+                            if (verificaDirecao(aviao1, temPontodeEncontro) && verificaDirecao(aviao2, temPontodeEncontro)){
+                                return verificaSeTempoMinimo(aviao1, aviao2, temPontodeEncontro, tempoMinimo);
+                            }
+                        }
                     }
                     return null;
                 }

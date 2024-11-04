@@ -126,7 +126,7 @@ const App = () => {
 		
 		avioesEmRotaDeColisao.forEach(element => {
 		
-			mensagensRelatorio.push(element[2] < 1 ? `O AVIÃO ${element[0]} E O AVIÃO ${element[1]} IRÃO COLIDIR!!!` :
+			mensagensRelatorio.push(element[2] == 0 ? `O AVIÃO ${element[0]} E O AVIÃO ${element[1]} IRÃO COLIDIR!!!` :
 				`O avião ${element[0]} e o avião ${element[1]} passarão pelo ponto ${element[3]} com uma diferença de ${element[2]}s.`
 			)
 		})
