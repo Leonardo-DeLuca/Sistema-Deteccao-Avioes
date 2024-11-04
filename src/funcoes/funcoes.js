@@ -268,6 +268,11 @@ export const transladarAviao = (x, y, listaAvioes) => {
         aviao.x = getNumDuasCasas(aviao.x + x);
         aviao.y = getNumDuasCasas(aviao.y + y);
         aviao.coeficientesEquacao = calcEquacaoVoo(aviao.x, aviao.y, aviao.direcao);
+        const raio = Math.sqrt(aviao.x ** 2 + aviao.y ** 2);
+        const angulo = Math.atan2(aviao.y, aviao.x) * (180 / Math.PI);
+
+        aviao.raio = getNumDuasCasas(raio);
+        aviao.angulo = getNumDuasCasas(angulo);
 
         return aviao;
     });
@@ -282,6 +287,12 @@ export const escalonarAviao = (x, y, listaAvioes) => {
         aviao.x = getNumDuasCasas(aviao.x * x);
         aviao.y = getNumDuasCasas(aviao.y * y);
         aviao.coeficientesEquacao = calcEquacaoVoo(aviao.x, aviao.y, aviao.direcao);
+        const raio = Math.sqrt(aviao.x ** 2 + aviao.y ** 2);
+        const angulo = Math.atan2(aviao.y, aviao.x) * (180 / Math.PI);
+
+        aviao.raio = getNumDuasCasas(raio);
+        aviao.angulo = getNumDuasCasas(angulo);
+
         return aviao;
     });
 }
@@ -303,6 +314,12 @@ export const rotacionarAviao = (angulo, centroX, centroY, listaAvioes) => {
 
 
         aviao.coeficientesEquacao = calcEquacaoVoo(aviao.x, aviao.y, aviao.direcao);
+
+        const raio = Math.sqrt(aviao.x ** 2 + aviao.y ** 2);
+        const anguloAviao = Math.atan2(aviao.y, aviao.x) * (180 / Math.PI);
+
+        aviao.raio = getNumDuasCasas(raio);
+        aviao.angulo = getNumDuasCasas(anguloAviao);
 
         return aviao
     })
