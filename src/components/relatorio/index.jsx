@@ -20,7 +20,7 @@ const Relatorio = ({ avioesRelatorio }) => {
                             <tbody>
                                 {avioesRelatorio.map((item, index) => (
                                     <tr key={index}>
-                                        <td className='index'>{index}</td>
+                                        <td className='index'>{index + 1}</td>
                                         <td>{item}</td>
                                     </tr>
                                 ))}

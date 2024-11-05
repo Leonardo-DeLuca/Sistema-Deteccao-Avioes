@@ -159,24 +159,31 @@ function verificaSeTempoMinimo(aviao1, aviao2, pontoDeEncontro, tempoMinimo) {
 
 function pontoDeEncontroMesmaReta(aviao1, aviao2) {
 
+    debugger
+
     const { x: xA, y: yA, velocidade: vA, direcao: anguloA } = aviao1;
     const { x: xB, y: yB, velocidade: vB, direcao: anguloB } = aviao2;
 
-    // Calcula componentes da velocidade
     const vAX = vA * getCosFromDegrees(anguloA);
     const vAY = vA * getSinFromDegrees(anguloA);
     const vBX = vB * getCosFromDegrees(anguloB);
     const vBY = vB * getSinFromDegrees(anguloB);
 
-    const tX = (xB - xA) / (vAX - vBX);
-    const tY = (yB - yA) / (vAY - vBY);
+    const coefX = vA * vAX - vB * vBX;
+    const constanteX = xB - xA;
+
+    const coefY = vA * vAY - vB * vBY;
+    const constanteY = yB - yA;
+
+    let tX = constanteX / coefX;
+    let tY = constanteY / coefY;
 
     if (xA === xB) {
         if (tY < 0) {
             return null;
         }
         const pontoX = xA;
-        const pontoY = getNumDuasCasas(pertoSuficiente(yA + vAY * tY));
+        const pontoY = getNumDuasCasas(pertoSuficiente(yA + vA * tY * vAY));
         return [pontoX, pontoY];
     }
 
@@ -184,15 +191,21 @@ function pontoDeEncontroMesmaReta(aviao1, aviao2) {
         if (tX < 0) {
             return null;
         }
-        const pontoX = getNumDuasCasas(pertoSuficiente(xA + vAX * tX));
+        const pontoX = getNumDuasCasas(pertoSuficiente(xA + vA * tX * vA));
         const pontoY = yA;
         return [pontoX, pontoY];
     }
 
-    const pontoX = getNumDuasCasas(pertoSuficiente(xA + vAY * tX));
-    const pontoY = getNumDuasCasas(pertoSuficiente(yA + vAY * tY));
+    if (Math.abs(tX - tY) < 1e-6) {
+        const t = tX;
+        const pontoX = xA + vA * t * vAX;
+        const pontoY = yA + vA * t * vAY;
 
-    return [pontoX, pontoY];
+        return [pontoX, pontoY];
+    } else {
+        return null;
+    }
+
 }
 
 function verificaDirecao(aviao, pontoEncontro) {
@@ -376,7 +389,7 @@ export const tempoMinimoEntreAvioes = (tempoMinimo, listaAvioes) => {
 
                         if(temPontodeEncontro){
                             if (verificaDirecao(aviao1, temPontodeEncontro) && verificaDirecao(aviao2, temPontodeEncontro)){
-                                return verificaSeTempoMinimo(aviao1, aviao2, temPontodeEncontro, tempoMinimo);
+                                return [aviao1.id, aviao2.id, 0];
                             }
                         }
                     }

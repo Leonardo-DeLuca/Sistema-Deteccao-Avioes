@@ -123,6 +123,8 @@ const App = () => {
 	const onRotaColisao = (data) => {
 		const avioesEmRotaDeColisao = tempoMinimoEntreAvioes(data, avioes);
 		let mensagensRelatorio = []
+
+		avioesEmRotaDeColisao.sort((a,b) => a[2] - b[2]);
 		
 		avioesEmRotaDeColisao.forEach(element => {
 		
