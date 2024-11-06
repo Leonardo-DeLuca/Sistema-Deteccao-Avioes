@@ -15,8 +15,13 @@ const App = () => {
 	const [avioesRelatorio, setAvioesRelatorio] = useState([]);
 
 	const addAviao = (novoAviao) => {
-		setAvioes([...avioes, novoAviao]);
-		setAvioesRadar([...avioes, novoAviao]);
+		if(avioes.length < 10){
+			setAvioes([...avioes, novoAviao]);
+			setAvioesRadar([...avioes, novoAviao]);
+		}
+		else{
+			alert("Ação inválida! Limite máximo de aviões no radar atingidos! (10)")
+		}
 	};
 
 	const onTransladar = (data) => {

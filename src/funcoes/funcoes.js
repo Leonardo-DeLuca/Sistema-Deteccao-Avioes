@@ -12,6 +12,10 @@ function pertoSuficiente(num) {
     return num;
 }
 
+function pertoDe(a, b, tolerancia) {
+    return Math.abs(a - b) <= tolerancia;
+}
+
 export const getTanFromDegrees = (degrees) => {
     let tanValor = Math.tan(degrees * (Math.PI / 180));
 
@@ -254,6 +258,21 @@ function verificaDirecao(aviao, pontoEncontro) {
 
 }
 
+function verificaAviaoNoPonto(aviao1, aviao2, pontoEncontro){
+    const direcaoAviao1 = verificaDirecao(aviao1, pontoEncontro),
+    direcaoAviao2 = verificaDirecao(aviao2, pontoEncontro),
+    coordenadaAviao1 = [aviao1.x, aviao1.y],
+    coordenadaAviao2 = [aviao2.x, aviao2.y],
+    condicao1 = direcaoAviao1 && direcaoAviao2,
+    condicao2 = direcaoAviao1 && (pertoDe(coordenadaAviao2[0], pontoEncontro[0], 0.05) && pertoDe(coordenadaAviao2[1], pontoEncontro[1], 0.05)),
+    condicao3 = direcaoAviao2 && (pertoDe(coordenadaAviao2[0], pontoEncontro[0], 0.05) && pertoDe(coordenadaAviao2[1], pontoEncontro[1], 0.05));
+
+    console.log(coordenadaAviao1, pontoEncontro)
+    console.log(coordenadaAviao2, pontoEncontro)
+
+    return condicao1 || condicao2 || condicao3
+}
+
 export const calcEquacaoVoo = (x, y, direcao) => {
 
     if (direcao === 90 || direcao === 270) {
@@ -398,7 +417,7 @@ export const tempoMinimoEntreAvioes = (tempoMinimo, listaAvioes) => {
 
                 if ((verificaInclinacaoLinha(aviao1.coeficientesEquacao[0], aviao2.coeficientesEquacao[0]))) {
                     if (temPontodeEncontro) {
-                        if (verificaDirecao(aviao1, temPontodeEncontro) && verificaDirecao(aviao2, temPontodeEncontro)) {
+                        if (verificaAviaoNoPonto(aviao1, aviao2, temPontodeEncontro)) {
                             console.log(`ID: ${aviao1.id} ID2: ${aviao2.id} indo em direção`)
 
                             return verificaSeTempoMinimo(aviao1, aviao2, temPontodeEncontro, tempoMinimo);
@@ -414,7 +433,8 @@ export const tempoMinimoEntreAvioes = (tempoMinimo, listaAvioes) => {
                 }
 
                 if (temPontodeEncontro) {
-                    if (verificaDirecao(aviao1, temPontodeEncontro) && verificaDirecao(aviao2, temPontodeEncontro)) {
+                    debugger
+                    if (verificaAviaoNoPonto(aviao1, aviao2, temPontodeEncontro)) {
                         console.log(`ID: ${aviao1.id} ID2: ${aviao2.id} indo em direção`)
 
                         return verificaSeTempoMinimo(aviao1, aviao2, temPontodeEncontro, tempoMinimo);
