@@ -162,9 +162,6 @@ function verificaSeTempoMinimo(aviao1, aviao2, pontoDeEncontro, tempoMinimo) {
 }
 
 function pontoDeEncontroMesmaReta(aviao1, aviao2) {
-
-    debugger
-
     const { x: xA, y: yA, velocidade: vA, direcao: anguloA } = aviao1;
     const { x: xB, y: yB, velocidade: vB, direcao: anguloB } = aviao2;
 
@@ -265,7 +262,7 @@ function verificaAviaoNoPonto(aviao1, aviao2, pontoEncontro){
     coordenadaAviao2 = [aviao2.x, aviao2.y],
     condicao1 = direcaoAviao1 && direcaoAviao2,
     condicao2 = direcaoAviao1 && (pertoDe(coordenadaAviao2[0], pontoEncontro[0], 0.05) && pertoDe(coordenadaAviao2[1], pontoEncontro[1], 0.05)),
-    condicao3 = direcaoAviao2 && (pertoDe(coordenadaAviao2[0], pontoEncontro[0], 0.05) && pertoDe(coordenadaAviao2[1], pontoEncontro[1], 0.05));
+    condicao3 = direcaoAviao2 && (pertoDe(coordenadaAviao1[0], pontoEncontro[0], 0.05) && pertoDe(coordenadaAviao1[1], pontoEncontro[1], 0.05));
 
     console.log(coordenadaAviao1, pontoEncontro)
     console.log(coordenadaAviao2, pontoEncontro)
@@ -433,7 +430,6 @@ export const tempoMinimoEntreAvioes = (tempoMinimo, listaAvioes) => {
                 }
 
                 if (temPontodeEncontro) {
-                    debugger
                     if (verificaAviaoNoPonto(aviao1, aviao2, temPontodeEncontro)) {
                         console.log(`ID: ${aviao1.id} ID2: ${aviao2.id} indo em direção`)
 
